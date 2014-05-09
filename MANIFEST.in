@@ -1,0 +1,5 @@
+include LICENSE
+include README.md
+recursive-include mezzanine_people/templates *
+recursive-include mezzanine_people/templatetags *
+recursive-include mezzanine_people/migrations *
