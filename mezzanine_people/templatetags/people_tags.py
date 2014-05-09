@@ -26,11 +26,6 @@ class RandomPeople(template.Node):
         self.var_name = var_name
 
     def render(self, context):
-        #Alternate implementation:
-        #from random import sample
-        #random_nums = sample(xrange(1,num_staff), int(self.limit)*10)
-        #random_people = Person.objects.filter(id__in = random_nums)[:int(self.limit)]
-
         random_people = Person.objects.order_by("?")[:int(self.limit)]
         if random_people and (int(self.limit) == 1):
             context[self.var_name] = random_people[0]
