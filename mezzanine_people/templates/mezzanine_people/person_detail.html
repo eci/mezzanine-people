@@ -1,15 +1,11 @@
 {% extends "base.html" %}
-{% load i18n mezzanine_tags keyword_tags %}
+{% load mezzanine_tags keyword_tags i18n %}
 
 {% block meta_title %}{% if person %}{{ person.full_name }}{% else %}{% trans "Person" %}{% endif %}{% endblock %}
-{% block body_id %}body-person{% endblock %}
 
 {% block meta_keywords %}{% metablock %}
 {% keywords_for person as keywords %}
-{% for keyword in keywords %}
-    {% if not forloop.first %}, {% endif %}
-    {{ keyword }}
-{% endfor %}
+{% for keyword in keywords %}{% if not forloop.first %}, {% endif %}{{ keyword }}{% endfor %}
 {% endmetablock %}{% endblock %}
 
 {% block meta_description %}{% metablock %}
@@ -20,65 +16,35 @@
 {% if page %}
 {% editable page.title %}{{ page.title }}{% endeditable %}
 {% else %}
-{% trans "People" %}
+{% editable person.title %}{{ person.title }}{% endeditable %}
 {% endif %}
 {% endblock %}
 
+{% block breadcrumb_menu %}
+{{ block.super }}
+<li class="active">{{ person.title }}</li>
+{% endblock %}
+
 {% block main %}
-  <div class="hero-unit">
-    <div class="row">
-      <div class="span8">
-        <p>{{ person.full_name }}, {{ person.job_title }}</p>
-      </div>
-    </div>
-  </div>
 
-  <hr />
+<h1>{{ person.full_name }}, {{ person.job_title }}</h1>
 
-  <section class="row">
+{% editable person.first_name person.last_name person.job_title person.bio %}
+<div>
+  <!-- image -->
+  <img src="{{ MEDIA_URL }}{% thumbnail person.mugshot 300 0 %}" />
+</div>
+{% endeditable %}
 
-    <!-- person item-->
-        {% editable person.first_name person.last_name person.title person.bio %}
-    <div class="span4">
+<div>
+  <p>Links:</p>
+  <ul>
+    {% for link in person.personlink_set.all %}
+    <li><a href="{{ link.url }}">{{ link.name }}</a></li>
+    {% endfor %}
+  </ul>
+</div>
 
-      <div class="thumbnail">
-        <!-- image -->
-        <img src="{{ MEDIA_URL }}{% thumbnail person.mugshot 300 0 %}" />
-      </div>
-
-    </div>
-    {% endeditable %}
-
-  </section>
-
-  <section class="row">
-
-    <div class="span8 member-detail">
-
-      <p class="member-networks">
-      {% for link in person.personlink_set.all %}
-        {% if link.name == "blog" %}
-        <a href="{{ link.url }}" class="icon-bullhorn"></a>
-        {% elif link.name == "twitter" %}
-        <a href="{{ link.url }}" class="icon-twitter"></a>
-        {% elif link.name == "facebook" %}
-        <a href="{{ link.url }}" class="icon-facebook"></a>
-        {% elif link.name == "linkedin" %}
-        <a href="{{ link.url }}" class="icon-linkedin"></a>
-        {% elif link.name == "googleplus" %}
-        <a href="{{ link.url }}" class="icon-google-plus"></a>
-        {% else %}
-        <a href="{{ link.url }}" class="icon-globe"></a>
-        {% endif %}
-      {% endfor %}
-      </p>
-
-      <p class="member-bio">
-        {{ person.bio|richtext_filters|safe }}
-      </p>
-
-    </div>
-
-  </section>
+<p>{{ person.bio|richtext_filters|safe }}</p>
 
 {% endblock %}

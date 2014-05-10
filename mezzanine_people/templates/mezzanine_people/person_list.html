@@ -1,15 +1,11 @@
 {% extends "base.html" %}
-{% load i18n mezzanine_tags keyword_tags %}
+{% load mezzanine_tags keyword_tags i18n %}
 
 {% block meta_title %}{% if page %}{{ page.richtextpage.meta_title }}{% else %}{% trans "People" %}{% endif %}{% endblock %}
-{% block body_id %}body-people{% endblock %}
 
 {% block meta_keywords %}{% metablock %}
 {% keywords_for page as keywords %}
-{% for keyword in keywords %}
-    {% if not forloop.first %}, {% endif %}
-    {{ keyword }}
-{% endfor %}
+{% for keyword in keywords %}{% if not forloop.first %}, {% endif %}{{ keyword }}{% endfor %}
 {% endmetablock %}{% endblock %}
 
 {% block meta_description %}{% metablock %}
@@ -24,79 +20,47 @@
 {% endif %}
 {% endblock %}
 
+{% block breadcrumb_menu %}
+{{ block.super }}
+{% if category %}
+<li>{% trans "Category:" %} {{ category }}<li>
+{% endif %}
+{% endblock %}
+
 {% block main %}
 
-  <!-- Content
-  ================================================== -->
-  <section id="content" class="container">
-
-
 {% if category %}
-<div class="hero-unit">
-    <p>
-    {% if category %}
-        {{ category }}
-    {% else %}
-        Our Team
-    {% endif %}
-    </p>
-    <hr />
-</div>
+  <p>
+  {% if category %}
+    {{ category }}
+  {% else %}
+    {% trans "People" %}
+  {% endif %}
+  </p>
 {% else %}
-    {% if page %}
-    {% editable page.richtextpage.content %}
-    <div class="hero-unit">
-        {{ page.richtextpage.content|safe }}
-    <hr />
-    </div>
-    {% endeditable %}
-    {% endif %}
+  {% if page %}
+  {% editable page.richtextpage.content %}
+  {{ page.richtextpage.content|safe }}
+  {% endeditable %}
+  {% endif %}
 {% endif %}
 
-  <section id="team-members">
+{% for person in people %}
+{% editable person.first_name person.last_name person.job_title person.bio %}
+<div>
+  <img src="{{ MEDIA_URL }}{% thumbnail person.mugshot 100 0 %}" />
+  <h3><a href="{{ person.get_absolute_url }}">{{ person.full_name }}</a></h3>
+  <h4>{{ person.job_title }}</h4>
+  <ul>
+  {% for link in person.personlink_set.all %}
+    <li><a href="{{ link.url }}">{{ link.name }}</a></li>
+  {% endfor %}
+  </ul>
+  <p>{{ person.bio|richtext_filter|safe }}</p>
+</div>
+{% endeditable %}
+{% endfor %}
 
-    {% for person in people %}
-
-        {% editable person.first_name person.last_name person.job_title person.bio %}
-    <article class="member">
-      <h3 class="member-name">{{ person.full_name }}</h3>
-      <h4 class="member-position">{{ person.job_title }}</h4>
-      <p class="member-networks">
-        {% for link in person.personlink_set.all %}
-          {% if link.name == "blog" %}
-          <a href="{{ link.url }}" class="icon-bullhorn"></a>
-          {% elif link.name == "twitter" %}
-          <a href="{{ link.url }}" class="icon-twitter"></a>
-          {% elif link.name == "facebook" %}
-          <a href="{{ link.url }}" class="icon-facebook"></a>
-          {% elif link.name == "linkedin" %}
-          <a href="{{ link.url }}" class="icon-linkedin"></a>
-          {% elif link.name == "googleplus" %}
-          <a href="{{ link.url }}" class="icon-google-plus"></a>
-          {% else %}
-          <a href="{{ link.url }}" class="icon-globe"></a>
-          {% endif %}
-        {% endfor %}
-      </p>
-      <p class="member-bio">
-        {{ person.bio|richtext_filter|safe }}
-      </p>
-      <div class="member-avatar">
-        <img src="{{ MEDIA_URL }}{% thumbnail person.mugshot 210 253 %}" />
-      </div>
-    </article>
-    {% endeditable %}
-
-    {% endfor %}
-
-            <hr />
-
-            <!-- Pagination
-            ================================================== -->
 {% pagination_for people %}
-
-  </section>
-
-</section>
 
 {% endblock %}

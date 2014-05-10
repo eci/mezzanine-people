@@ -1,4 +1,4 @@
-include LICENSE
+include LICENSE.txt
 include README.md
 recursive-include mezzanine_people/templates *
 recursive-include mezzanine_people/templatetags *
