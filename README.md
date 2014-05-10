@@ -23,7 +23,7 @@ Setup
     )
 ```
 
-* Set values in your project settings.py (Optional):
+* Set values in your project settings.py (optional):
 ```python
     PEOPLE_PER_PAGE = 5 # the default is 10
 ```
@@ -38,6 +38,6 @@ Setup
 
 Releases
 --------
-    - Version 0.1 - Initial Release
++ Version 0.1 - Initial Release
 
 [1]: http://mezzanine.jupo.org "Mezzanine CMS"
