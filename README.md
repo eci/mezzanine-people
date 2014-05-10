@@ -5,7 +5,7 @@ This pluggable app provides a "Person" model to categorize and list people on yo
 
 Requirements
 ============
-    - [Mezzanine CMS] [1]
+[Mezzanine CMS] [1]
 
 
 Setup
